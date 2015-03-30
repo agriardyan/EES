@@ -6,7 +6,9 @@
 
 package com.pti.eesmail.mail;
 
+import com.pti.eesmail.crypto.AESEncrypt;
 import com.sun.mail.smtp.SMTPTransport;
+import java.io.ByteArrayOutputStream;
 import java.security.Security;
 import java.util.Date;
 import java.util.Properties;
@@ -16,6 +18,7 @@ import javax.mail.NoSuchProviderException;
 import javax.mail.Session;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 
 /**
@@ -40,16 +43,8 @@ public class SendMail {
         return mUsernameEmail;
     }
 
-    public void setmUsernameEmail(String mUsernameEmail) {
-        this.mUsernameEmail = mUsernameEmail;
-    }
-
     public String getmPasswordEmail() {
         return mPasswordEmail;
-    }
-
-    public void setmPasswordEmail(String mPasswordEmail) {
-        this.mPasswordEmail = mPasswordEmail;
     }
 
     public String getmPasswordCrypto() {
@@ -92,7 +87,7 @@ public class SendMail {
         this.mContentMail = mContentMail;
     }
     
-    private SMTPTransport createSMTPTransport(Session session) throws NoSuchProviderException, MessagingException {
+    private SMTPTransport connectToSMTPServer(Session session) throws NoSuchProviderException, MessagingException {
         SMTPTransport smtp = (SMTPTransport) session.getTransport("smtps");
         smtp.connect("smtp.gmail.com", getmUsernameEmail(), getmPasswordEmail());
         return smtp;
@@ -128,24 +123,22 @@ public class SendMail {
 
     /**
      * Send email using GMail SMTP server.
-     *
-     * @param username GMail username
-     * @param password GMail password
-     * @param recipientEmail TO recipient
-     * @param ccEmail CC recipient. Can be empty if there is no CC recipient
-     * @param title title of the message
-     * @param message message to be sent
+     * 
      * @throws AddressException if the email address parse failed
      * @throws MessagingException if the connection is dead or not in the
+     * @throws Exception wtf?
      * connected state or if the message is not a MimeMessage
      */
-    private void Send() 
-            throws AddressException, MessagingException {
+    public void send() 
+            throws AddressException, MessagingException, Exception {
         
         Session session = createSession();
         
+        String encryptedSubject = AESEncrypt.encrypt(getmSubjectMail());
+        String encryptedContent = AESEncrypt.encrypt(getmContentMail());
+        
         // koneksi ke mail server
-        SMTPTransport SMTPTransport = createSMTPTransport(session);
+        SMTPTransport SMTPTransport = connectToSMTPServer(session);
 
         MimeMessage msg = new MimeMessage(session);
 
@@ -159,8 +152,8 @@ public class SendMail {
         }
 
         // Judul dan konten pesan
-        msg.setSubject(getmSubjectMail());
-        msg.setText(getmContentMail(), "utf-8");
+        msg.setSubject(encryptedSubject);
+        msg.setText(encryptedContent);
         msg.setSentDate(new Date());
         
         SMTPTransport.sendMessage(msg, msg.getAllRecipients());

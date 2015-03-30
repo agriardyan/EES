@@ -17,7 +17,6 @@ import javax.crypto.Cipher;
 import javax.crypto.SealedObject;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
 
@@ -30,12 +29,7 @@ public class AESEncrypt {
     private static final String ALGORITHM = "AES";
     private static final String startingKey = "TheBestKeysEverInTheHumanHistory";
 
-    private static IvParameterSpec ivSpecial = null;
 
-//    static
-//    {
-//        Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
-//    }
     public static String encrypt(String Data) throws Exception {
         Key key = generateKey(startingKey);
         Cipher c = Cipher.getInstance(ALGORITHM);

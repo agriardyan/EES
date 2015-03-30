@@ -7,6 +7,8 @@
 package com.pti.eesmail.main;
 
 import com.pti.eesmail.crypto.AESEncrypt;
+import com.pti.eesmail.mail.RetrieveMail;
+import com.pti.eesmail.mail.SendMail;
 
 /**
  *
@@ -19,15 +21,37 @@ public class EESMailMain {
      */
     public static void main(String[] args) throws Exception {
         // TODO code application logic here
-        String originalMessage = "HaloBro";
-        
-        String encrypt = AESEncrypt.encrypt(originalMessage);
-        System.out.println(encrypt);
-        
-        String resultMessage = AESEncrypt.decrypt(encrypt);
-        System.out.println(resultMessage);
         
         System.out.println("-------------");
+        
+        String username = "testing1.pti@gmail.com";
+        String passwordEmail = "proyekteknologiinformasi";
+        
+        String ccEmail = "";
+        String recipient = "testing2.pti@gmail.com";
+        
+        String subject = "EED-IS";
+        
+        String content = "Lorem ipsum dolor sit amet. halohalohalo";
+        
+        SendMail mail = new SendMail(username, passwordEmail);
+        mail.setmRecipientEmail(recipient);
+        mail.setmCCEmail(ccEmail);
+        mail.setmSubjectMail(subject);
+        mail.setmContentMail(content);
+        
+        mail.send();
+        
+        System.out.println("SUCESSFULLY SEND");
+        
+        System.out.println("---------------------");
+        
+        username = "testing2.pti@gmail.com";
+        passwordEmail = "proyekteknologiinformasi";
+                
+        RetrieveMail retmail = new RetrieveMail(username, passwordEmail);
+        
+        retmail.check();
         
     }
     
