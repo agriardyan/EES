@@ -1,2 +1,2 @@
 # EES
-test site for MES
+test site for MES (Mail Encrypting System)
